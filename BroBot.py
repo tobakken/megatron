@@ -8,50 +8,33 @@ import time
 
 class BroBot():
     def __init__(self):
-        left_motor = Motor(Port.B)
-        right_motor = Motor(Port.C)
-        self.brobot = DriveBase(left_motor, right_motor, wheel_diameter=55, axle_track=127)
-        self.left_color_sensor = ColorSensor(Port.S4)
-        self.right_color_sensor = ColorSensor(Port.S2)
-
+        
+        self.brobot = DriveBase(left_motor=Motor(Port.B), right_motor=Motor(Port.C), wheel_diameter=55, axle_track=127)
+        self.left_color_sensor, self.right_color_sensor = ColorSensor(Port.S4), ColorSensor(Port.S2)
         self.ev3 = EV3Brick()
-
-        self.RED_ON_WHITE = 57
-        self.RED_ON_BLACK = 5
-
-        self.GREEN_ON_WHITE = 55
-        self.GREEN_ON_BLACK = 4
-
-        self.BLUE_ON_WHITE = 100
-        self.BLUE_ON_BLACK = 10
-
-        self.RED = (self.RED_ON_WHITE + self.RED_ON_BLACK) // 2
-        self.GREEN = (self.GREEN_ON_WHITE + self.GREEN_ON_BLACK) // 2
-        self.BLUE = (self.BLUE_ON_WHITE + self.BLUE_ON_BLACK) // 2
+        self.RED, self.GREEN, self.BLUE = 50, 50, 50 
 
         self.start_time = time.time()
         self.execute_program = True
-        self.no_line = False
+        self.no_line = False  
 
     def calibrate(self):
-        self.ev3.screen.print("Calibrating...\nL-SENSOR: WHITE\nR-SENSOR: BLACK\nPUSH A BUTTON\nTO CONTINUE")
+        self.ev3.screen.print("COLOR CALIBRATION:\nL-SENSOR: WHITE\nR-SENSOR: BLACK\nPUSH A BUTTON\nTO CONTINUE")
+        self.wait_for_button()
+        self.ev3.screen.clear()
+
+        RED_ON_WHITE, GREEN_ON_WHITE, BLUE_ON_WHITE = self.left_color_sensor.rgb()
+        RED_ON_BLACK, GREEN_ON_BLACK, BLUE_ON_BLACK = self.right_color_sensor.rgb()
+
+        self.RED = (RED_ON_WHITE + RED_ON_BLACK) // 2
+        self.GREEN = (GREEN_ON_WHITE + GREEN_ON_BLACK) // 2
+        self.BLUE = (BLUE_ON_WHITE + BLUE_ON_BLACK) // 2
+
+    def wait_for_button(self):
         while True:
             if self.ev3.buttons.pressed():
                 break
             continue
-        rgb = self.left_color_sensor.rgb() + self.right_color_sensor.rgb()
-
-        self.RED_ON_WHITE = rgb[0]
-        self.GREEN_ON_WHITE = rgb[1]
-        self.BLUE_ON_WHITE = rgb[2]
-
-        self.RED_ON_BLACK = rgb[3]
-        self.GREEN_ON_BLACK = rgb[4]
-        self.BLUE_ON_BLACK = rgb[5]
-
-        self.RED = (self.RED_ON_WHITE + self.RED_ON_BLACK) // 2
-        self.GREEN = (self.GREEN_ON_WHITE + self.GREEN_ON_BLACK) // 2
-        self.BLUE = (self.BLUE_ON_WHITE + self.BLUE_ON_BLACK) // 2
 
     def is_black(self, color_sensor):
         (red, green, blue) = color_sensor.rgb()
@@ -88,7 +71,7 @@ class BroBot():
 
     def run(self):
         turn_rate = 90
-        drive_speed = 250
+        drive_speed = 200
 
         right_is_black = self.is_black(self.right_color_sensor)
         left_is_black = self.is_black(self.left_color_sensor)

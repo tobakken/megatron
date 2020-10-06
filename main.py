@@ -1,15 +1,12 @@
 #!/usr/bin/env pybricks-micropython
-from pybricks.hubs import EV3Brick
-from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor, InfraredSensor, UltrasonicSensor, GyroSensor)
-from pybricks.parameters import Port, Stop, Direction, Button, Color
-from pybricks.tools import wait, StopWatch, DataLog
-from pybricks.robotics import DriveBase
-from pybricks.media.ev3dev import SoundFile, ImageFile
 from BroBot import BroBot
+from pybricks.tools import wait
 
 # Initiate EV3 & BroBot
 brobot = BroBot()
 
 brobot.calibrate()
-wait(2000)
+wait(1000)
+brobot.ev3.speaker.beep(frequency = 999)
+brobot.wait_for_button()
 brobot.drive_loop()
