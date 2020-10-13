@@ -44,8 +44,8 @@ class BroBot():
             return False
 
     def look_for_line(self):
-        turn_rate = 80
-        drive_speed = 50
+        turn_rate = 50
+        drive_speed = 100
 
         right_is_black = self.is_black(self.right_color_sensor)
         left_is_black = self.is_black(self.left_color_sensor)
@@ -53,7 +53,7 @@ class BroBot():
         if not right_is_black and not left_is_black:
             self.brobot.drive(drive_speed, turn_rate)
         if left_is_black or right_is_black:
-            wait(100)
+            wait(drive_speed/1.75)
             self.execute_program = True
             self.no_line = False
 
@@ -71,14 +71,15 @@ class BroBot():
 
     def run(self):
         turn_rate = 90
-        drive_speed = 200
+        drive_speed = 175
 
         right_is_black = self.is_black(self.right_color_sensor)
         left_is_black = self.is_black(self.left_color_sensor)
 
         if not right_is_black and not left_is_black:
-            self.brobot.drive(drive_speed, 0)
+            self.brobot.drive(drive_speed, -5)
         elif right_is_black and left_is_black:
+            wait(drive_speed/1.75)
             self.execute_program = False
             self.no_line = True
         elif left_is_black:
@@ -88,7 +89,7 @@ class BroBot():
             self.brobot.drive(drive_speed/2, turn_rate)
             self.start_time = time.time()
 
-        if time.time() - self.start_time >= 4:
+        if time.time() - self.start_time >= 10:
             self.start_time = time.time()
             self.execute_program = False
             self.no_line = True
